@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Flask Auth Example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+</head>
+
+<body>
+    <section class="hero is-primary is-fullheight">
+
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+                <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.min.js"></script>
+                <script type="text/javascript" charset="utf-8">
+                const options = {
+                  // Clean session
+                  clean: true,
+                  connectTimeout: 4000,
+                  // Auth
+                  clientId: 'clientjs',
+                  username: 'harits',
+                  password: 'harits',
+                }
+                const client  = mqtt.connect('ws://192.168.1.123:9001', options)
+                client.on('connect', function () {
+                  console.log('Connected')
+                  client.subscribe('home/livingroom/temperature')
+                  client.subscribe('home/livingroom/humidity')
+                })
+                
+                client.on('message', function (topic, message) {
+                  // message is Buffer
+                
+                  if(topic.toString() == 'home/livingroom/temperature'){
+                    msg = message.toString()
+                    console.log(msg)
+                    console.log(topic.toString())
+                
+                    var text = 'Temperature: ' + msg + ' *C ';
+                    $('#temperature_msg').append(text + '<br><br>');
+                
+                  } else {
+                    msg = message.toString()
+                    console.log(msg)
+                    console.log(topic.toString())
+                
+                    var text = 'Humidity: ' + msg + '% ';
+                    $('#humidity_msg').append(text + '<br><br>');
+                  }
+                  
+                  client.end()
+                })
+                
+                </script>
+                <style>
+                  div {
+                    color: black;
+                    font-weight: bold;
+                    font-size: 120%;
+                  }
+                
+                  h1 {
+                    margin-bottom: 2%;
+                    
+                  }
+                </style>
+                
+                <h1> Readings from DHT11 sensor </h1>
+                <br>
+                <div id="temperature_msg"></div>
+                <div id="humidity_msg"></div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
